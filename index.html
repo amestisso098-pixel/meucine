@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>MEUCINE V3.5</title>
     <style>
-        /* ESTRUTURA VISUAL TRANCADA [cite: 2026-01-16] */
+        /* [cite: 2026-01-16] ESTRUTURA VISUAL TRANCADA */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { background-color: #141414; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow-x: hidden; }
         header { height: 70px; padding: 0 4%; display: flex; align-items: center; justify-content: space-between; background: #000; position: fixed; width: 100%; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
@@ -40,6 +40,7 @@
 </div>
 <script>
     function openPlayer(url) {
+        // [cite: 2026-02-14] Link corrigido para evitar erro de criador no Odysee
         document.getElementById('main-iframe').src = url;
         document.getElementById('player-container').style.display = 'block';
     }
