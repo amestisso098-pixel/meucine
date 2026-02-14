@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>MEUCINE V3.5</title>
+    <style>
+        /* ESTRUTURA VISUAL TRANCADA - PV1 CONSERVADO [cite: 2026-01-16] */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: #141414; color: #fff; font-family: 'Segoe UI', sans-serif; overflow-x: hidden; }
+        header { 
+            height: 70px; padding: 0 4%; display: flex; align-items: center; justify-content: space-between;
+            background: #000; position: fixed; width: 100%; z-index: 100; 
+        }
+        .logo { color: #e50914; font-size: 30px; font-weight: bold; }
+        .btn-medical-home { 
+            background: #0078d7; color: white; border: none; padding: 10px 20px; 
+            border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 14px;
+        }
+        .content { padding: 100px 4% 20px 4%; }
+        .row-title { font-size: 1.5rem; margin-bottom: 20px; color: #e5e5e5; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 25px; }
+        .movie-card { 
+            background: #222; border-radius: 8px; overflow: hidden; cursor: pointer; 
+            transition: 0.3s; border: 3px solid transparent; position: relative;
+        }
+        .movie-card:hover { border-color: #e50914; transform: scale(1.05); }
+        .custom-cover { 
+            width: 100%; aspect-ratio: 2/3; 
+            background: radial-gradient(circle, rgba(229,9,20,1) 0%, rgba(0,0,0,1) 85%);
+            display: flex; align-items: center; justify-content: center; text-align: center;
+        }
+        .cover-text { color: #e50914; font-size: 24px; font-weight: 900; text-transform: uppercase; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); }
+        .card-info { background: #111; padding: 12px; font-size: 14px; text-align: center; font-weight: bold; }
+
+        /* PLAYER E FILTRO DE NITIDEZ MANTIDOS [cite: 2026-01-16] */
+        #pre-play-screen {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, rgba(229,9,20,1) 0%, rgba(0,0,0,1) 90%);
+            z-index: 9998; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .btn-start-movie {
+            background: #e50914; color: white; border: none; padding: 20px 40px;
+            font-size: 20px; font-weight: bold; border-radius: 50px; cursor: pointer;
+            box-shadow: 0 0 20px rgba(229,9,20,0.6); transition: 0.3s; margin-top: 30px;
+        }
+        #meucine-player-container { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; }
+        
+        iframe { 
+            width: 100%; height: 100%; border: none; 
+            filter: contrast(1.1) brightness(1.05) saturate(1.1);
+            image-rendering: -webkit-optimize-contrast;
+        }
+
+        .player-controls { position: absolute; top: 20px; right: 20px; z-index: 10000; }
+        .btn-close { background: #e50914; color: white; padding: 12px 24px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">MEUCINE</div>
+    <button class="btn-medical-home" onclick="runSmartCheck()">🧠 IA MÉDICA</button>
+</header>
+
+<div class="content">
+    <h2 class="row-title">Sua Coleção</h2>
+    <div class="grid">
+        <div class="movie-card" onclick="openPrePlay('https://odysee.com/%24/embed/%40amestisso098%3A9%2FHitch_C7%3Ad?r=4d9mWJH5H6DsZkeXfQpC4Y1Yt2KJJjYP', 'Hitch: Conselheiro Amoroso')">
+            <div class="custom-cover"><div class="cover-text">MEUCINE</div></div>
+            <div class="card-info">Hitch: Conselheiro Amoroso</div>
+        </div>
+        <div class="movie-card" onclick="openPrePlay('https://odysee.com/%24/embed/%40amestisso098%3A9%2FO-Prot3tor_c7%3A9?r=4d9mWJH5H6DsZkeXfQpC4Y1Yt2KJJjYP', 'O Protetor')">
+            <div class="custom-cover"><div class="cover-text">MEUCINE</div></div>
+            <div class="card-info">O Protetor</div>
+        </div>
+        <div class="movie-card" onclick="openPrePlay('https://odysee.com/%24/embed/%40amestisso098%3A9%2FSMITH_C7%3Aa?r=4d9mWJH5H6DsZkeXfQpC4Y1Yt2KJJjYP', 'Sr. e Sra. Smith')">
+            <div class="custom-cover"><div class="cover-text">MEUCINE</div></div>
+            <div class="card-info">Sr. e Sra. Smith</div>
+        </div>
+        <div class="movie-card" onclick="openPrePlay('https://odysee.com/%24/embed/%40amestisso098%3A9%2FC7_MTX.1%3Ae?r=4d9mWJH5H6DsZkeXfQpC4Y1Yt2KJJjYP', 'Matrix (1999)')">
+            <div class="custom-cover"><div class="cover-text">MEUCINE</div></div>
+            <div class="card-info">Matrix (1999)</div>
+        </div>
+        <div class="movie-card" onclick="openPrePlay('https://odysee.com/%24/embed/%40amestisso098%3A9%2FMTX2%3Af?r=4d9mWJH5H6DsZkeXfQpC4Y1Yt2KJJjYP', 'Matrix Reloaded')">
+            <div class="custom-cover"><div class="cover-text">MEUCINE</div></div>
+            <div class="card-info">Matrix Reloaded</div>
+        </div>
+        <div class="movie-card" onclick="openPrePlay('https://odysee.com/%24/embed/%40amestisso098%3A9%2FMTX.3%3Aa?r=4d9mWJH5H6DsZkeXfQpC4Y1Yt2KJJjYP', 'Matrix Revolutions')">
+            <div class="custom-cover"><div class="cover-text">MEUCINE</div></div>
+            <div class="card-info">Matrix Revolutions</div>
+        </div>
+        <div class="movie-card" onclick="openPrePlay('https://odysee.com/%24/embed/%40amestisso098%3A9%2FC7_VeLOZ%3A7?r=4d9mWJH5H6DsZkeXfQpC4Y1Yt2KJJjYP', 'Velozes e Furiosos')">
+            <div class="custom-cover"><div class="cover-text">MEUCINE</div></div>
+            <div class="card-info">Velozes e Furiosos</div>
+        </div>
+        <div class="movie-card" onclick="openPrePlay('https://odysee.com/%24/embed/%40amestisso098%3A9%2FC7_Batm4n%3A2?r=4d9mWJH5H6DsZkeXfQpC4Y1Yt2KJJjYP', 'The Batman')">
+            <div class="custom-cover"><div class="cover-text">MEUCINE</div></div>
+            <div class="card-info">The Batman</div>
+        </div>
+        <div class="movie-card" onclick="openPrePlay('https://odysee.com/%24/embed/%40amestisso098%3A9%2FC7_Ninj4%3A1?r=4d9mWJH5H6DsZkeXfQpC4Y1Yt2KJJjYP', 'Ninja Assassino')">
+            <div class="custom-cover"><div class="cover-text">MEUCINE</div></div>
+            <div class="card-info">Ninja Assassino</div>
+        </div>
+    </div>
+</div>
+
+<div id="pre-play-screen">
+    <div class="cover-text" style="font-size: 60px;">MEUCINE</div>
+    <button class="btn-start-movie" id="confirm-play-btn">ASSISTIR AGORA ▶</button>
+    <button class="btn-close" style="margin-top: 20px; background: transparent; border: 1px solid #fff;" onclick="closePrePlay()">VOLTAR</button>
+</div>
+
+<div id="meucine-player-container">
+    <div class="player-controls"><button class="btn-close" onclick="closePlayer()">FECHAR X</button></div>
+    <iframe id="main-iframe" src="" allow="autoplay; fullscreen" allowfullscreen></iframe>
+</div>
+
+<script>
+    let currentUrl = "";
+
+    function openPrePlay(url, title) {
+        currentUrl = url;
+        document.getElementById('pre-play-screen').style.display = 'flex';
+        document.getElementById('confirm-play-btn').onclick = function() {
+            playMovieFromZero(currentUrl);
+        };
+    }
+
+    function closePrePlay() {
+        document.getElementById('pre-play-screen').style.display = 'none';
+    }
+
+    function playMovieFromZero(url) {
+        document.getElementById('pre-play-screen').style.display = 'none';
+        const playerContainer = document.getElementById('meucine-player-container');
+        const iframe = document.getElementById('main-iframe');
+        const finalUrl = url.includes('?') ? `${url}&autoplay=1&t=0` : `${url}?autoplay=1&t=0`;
+        iframe.src = finalUrl; 
+        playerContainer.style.display = 'block';
+    }
+
+    function closePlayer() {
+        document.getElementById('main-iframe').src = "";
+        document.getElementById('meucine-player-container').style.display = 'none';
+    }
+
+    function runSmartCheck() {
+        alert("IA MÉDICA: Hitch adicionado com sucesso. Qualidade de imagem otimizada.");
+    }
+</script>
+</body>
+</html>
